@@ -34,7 +34,7 @@ func (m *StableMarriage) FindMatching(input *FindMatchingInput) (*FindMatchingOu
 
 		for suitor != nil {
 			courted := suitor.Preference[nextWomanToCourtIndex[suitor.ID]]
-			currentFiancee := getManByID(input.Men, getManIDByFiancee(engagements, *courted))
+			currentFiancee := getManEngagedWithWoman(engagements, input.Men, courted)
 			if courted.Prefer(suitor, currentFiancee) {
 				// Break up the current couple with the courted woman and make the former fiancee the next suitor.
 				if currentFiancee != nil {
@@ -67,22 +67,25 @@ func (m *StableMarriage) FindMatching(input *FindMatchingInput) (*FindMatchingOu
 	return matching, nil
 }
 
-func getManIDByFiancee(engagements map[string]string, woman entities.Woman) string {
+func getManEngagedWithWoman(engagements map[string]string, men []*entities.Man, woman *entities.Woman) *entities.Man {
+	if woman == nil {
+		return nil
+	}
+
+	engagedManID := ""
 	for manID, womanID := range engagements {
 		if woman.ID == womanID {
-			return manID
+			engagedManID = manID
+			break
 		}
 	}
 
-	return ""
-}
-
-func getManByID(men []*entities.Man, ID string) *entities.Man {
 	for _, m := range men {
-		if m.ID == ID {
+		if m.ID == engagedManID {
 			return m
 		}
 	}
+
 	return nil
 }
 

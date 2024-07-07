@@ -25,11 +25,11 @@ func TestStableMarriage_FindMatching(t *testing.T) {
 	anatole.Preference = []*entities.Woman{cunegonde, brigitte, donatienne, antoniette}
 	barnabe.Preference = []*entities.Woman{brigitte, antoniette, cunegonde, donatienne}
 	camille.Preference = []*entities.Woman{brigitte, donatienne, antoniette, cunegonde}
-	dominique.Preference = []*entities.Woman{brigitte, donatienne, antoniette, cunegonde}
+	dominique.Preference = []*entities.Woman{cunegonde, antoniette, donatienne, brigitte}
 
 	// Women Preference
-	antoniette.Preference = []*entities.Man{anatole, barnabe, dominique, anatole}
-	brigitte.Preference = []*entities.Man{camille, anatole, dominique, camille}
+	antoniette.Preference = []*entities.Man{anatole, barnabe, dominique, camille}
+	brigitte.Preference = []*entities.Man{camille, anatole, dominique, barnabe}
 	cunegonde.Preference = []*entities.Man{camille, barnabe, dominique, anatole}
 	donatienne.Preference = []*entities.Man{barnabe, anatole, camille, dominique}
 
@@ -40,6 +40,7 @@ func TestStableMarriage_FindMatching(t *testing.T) {
 		err            error
 	}{
 		{
+			name: "sucesfull man proposing matching for Knuth, Chap 1, Example 1",
 			input: &stable_marriage.FindMatchingInput{
 				[]*entities.Man{anatole, barnabe, camille, dominique},
 				[]*entities.Woman{antoniette, brigitte, cunegonde, donatienne},

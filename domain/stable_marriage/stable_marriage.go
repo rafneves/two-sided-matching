@@ -2,7 +2,6 @@ package stable_marriage
 
 import (
 	"errors"
-	"fmt"
 	"github.com/rafneves/two-sided-matching/domain/entities"
 )
 
@@ -35,22 +34,15 @@ func (m *StableMarriage) FindMatching(input *FindMatchingInput) (*FindMatchingOu
 
 		for suitor != nil {
 			courted := suitor.Preference[nextCourtshipIndex[suitor.ID]]
-			fmt.Printf("%s proposes to %s\n", suitor.ID, courted.ID)
 			if suitorIsPreferredToCurrentFiancee(engagements, *courted, *suitor) {
 				// Break up the current couple with the courted woman and make the former fiancee the next suitor.
 				nextSuitor := getManByID(input.Men, getManIDByFiancee(engagements, *courted))
 				if nextSuitor != nil {
-					fmt.Printf("\t%s breaks with %s\n", courted.ID, getManIDByFiancee(engagements, *courted))
-				}
-				if nextSuitor != nil {
-					fmt.Printf("\tNow %s is free\n", nextSuitor.ID)
 					delete(engagements, nextSuitor.ID)
 				}
-				fmt.Printf("\t%s accepts the proposal and engages with %s\n", courted.ID, suitor.ID)
 				engagements[suitor.ID] = courted.ID
 				suitor = nextSuitor
 			} else {
-				fmt.Printf("\t%s prefers her current partner and refuses the proposal of %s\n", courted.ID, suitor.ID)
 			}
 
 			// Remove the courted woman from suitor list as she already has someone preferred to him.

@@ -1,0 +1,4 @@
+// TODO: Add a very unpleasant suitor as a real Man so we don't need to handle "" and nil explicitly.
+// TODO: Evaluate if I should mutate or not the entry lists. If not I need another loop.
+// TODO: Evaluate if the manyremovals are good or not.
+// TODO: Avoid so much duplication in getManyByID and getWomanByID

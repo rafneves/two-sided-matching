@@ -20,7 +20,6 @@ func (m *StableMarriage) FindMatching(input *FindMatchingInput) (*FindMatchingOu
 		return nil, errors.New("the number of men don't match the numbe of women")
 	}
 	instanceSize := len(input.Men)
-
 	engagements := newEngagement()
 
 	nextWomanToCourtIndex := make(map[string]int)
@@ -28,8 +27,7 @@ func (m *StableMarriage) FindMatching(input *FindMatchingInput) (*FindMatchingOu
 		nextWomanToCourtIndex[m.ID] = 0
 	}
 
-	suitorIndex := 0
-	for len(engagements) < instanceSize {
+	for suitorIndex := 0; len(engagements) < instanceSize; {
 		suitor := input.Men[suitorIndex]
 
 		for suitor != nil {

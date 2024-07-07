@@ -21,7 +21,7 @@ func (m *StableMarriage) FindMatching(input *FindMatchingInput) (*FindMatchingOu
 	}
 	instanceSize := len(input.Men)
 
-	engagements := make(map[string]string)
+	engagements := newEngagement()
 
 	nextWomanToCourtIndex := make(map[string]int)
 	for _, m := range input.Men {
@@ -36,15 +36,14 @@ func (m *StableMarriage) FindMatching(input *FindMatchingInput) (*FindMatchingOu
 			courted := suitor.Preference[nextWomanToCourtIndex[suitor.ID]]
 			currentFiancee := getManEngagedWithWoman(engagements, input.Men, courted)
 			if courted.Prefer(suitor, currentFiancee) {
-				// Break up the current couple with the courted woman and make the former fiancee the next suitor.
-				if currentFiancee != nil {
-					delete(engagements, currentFiancee.ID)
-				}
-				engagements[suitor.ID] = courted.ID
+				engagements.Remove(courted.ID)
+				engagements.Add(suitor.ID, courted.ID)
+
+				// The next suitor is the former fiancee.
 				suitor = currentFiancee
 			}
 
-			// Courted refused the proposal. Try the next.
+			// Courted refused the proposal. Court the next in the preference list.
 			if suitor != nil {
 				nextWomanToCourtIndex[suitor.ID] = nextWomanToCourtIndex[suitor.ID] + 1
 			}
@@ -96,4 +95,25 @@ func getWomanByID(women []*entities.Woman, ID string) *entities.Woman {
 		}
 	}
 	return nil
+}
+
+type engagement map[string]string
+
+func newEngagement() engagement {
+	return make(map[string]string)
+}
+
+func (e engagement) Remove(womanID string) {
+	for m, w := range e {
+		if w == womanID {
+			delete(e, m)
+		}
+	}
+}
+
+func (e engagement) Add(manID string, womanID string) {
+	if manID == "" || womanID == "" {
+		return
+	}
+	e[manID] = womanID
 }

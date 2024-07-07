@@ -41,13 +41,13 @@ func (m *StableMarriage) FindMatching(input *FindMatchingInput) (*FindMatchingOu
 				suitor = currentFiancee
 			}
 
-			// Courted refused the proposal. Court the next in the preference list.
+			// Courted refused the proposal. Court the next woman in the preference list.
 			if suitor != nil {
 				nextWomanToCourtIndex[suitor.ID] = nextWomanToCourtIndex[suitor.ID] + 1
 			}
 		}
 
-		// The next man will be the suitor
+		// Now a non-engaged man will court in the next round.
 		suitorIndex = suitorIndex + 1
 	}
 

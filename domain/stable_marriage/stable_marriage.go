@@ -23,9 +23,9 @@ func (m *StableMarriage) FindMatching(input *FindMatchingInput) (*FindMatchingOu
 
 	engagements := make(map[string]string)
 
-	nextCourtshipIndex := make(map[string]int)
+	nextWomanToCourtIndex := make(map[string]int)
 	for _, m := range input.Men {
-		nextCourtshipIndex[m.ID] = 0
+		nextWomanToCourtIndex[m.ID] = 0
 	}
 
 	suitorIndex := 0
@@ -33,21 +33,20 @@ func (m *StableMarriage) FindMatching(input *FindMatchingInput) (*FindMatchingOu
 		suitor := input.Men[suitorIndex]
 
 		for suitor != nil {
-			courted := suitor.Preference[nextCourtshipIndex[suitor.ID]]
-			if suitorIsPreferredToCurrentFiancee(engagements, *courted, *suitor) {
+			courted := suitor.Preference[nextWomanToCourtIndex[suitor.ID]]
+			currentFiancee := getManByID(input.Men, getManIDByFiancee(engagements, *courted))
+			if courted.Prefer(suitor, currentFiancee) {
 				// Break up the current couple with the courted woman and make the former fiancee the next suitor.
-				nextSuitor := getManByID(input.Men, getManIDByFiancee(engagements, *courted))
-				if nextSuitor != nil {
-					delete(engagements, nextSuitor.ID)
+				if currentFiancee != nil {
+					delete(engagements, currentFiancee.ID)
 				}
 				engagements[suitor.ID] = courted.ID
-				suitor = nextSuitor
-			} else {
+				suitor = currentFiancee
 			}
 
-			// Remove the courted woman from suitor list as she already has someone preferred to him.
+			// Courted refused the proposal. Try the next.
 			if suitor != nil {
-				nextCourtshipIndex[suitor.ID] = nextCourtshipIndex[suitor.ID] + 1
+				nextWomanToCourtIndex[suitor.ID] = nextWomanToCourtIndex[suitor.ID] + 1
 			}
 		}
 
@@ -66,22 +65,6 @@ func (m *StableMarriage) FindMatching(input *FindMatchingInput) (*FindMatchingOu
 	}
 
 	return matching, nil
-}
-
-func suitorIsPreferredToCurrentFiancee(engagements map[string]string, woman entities.Woman, man entities.Man) bool {
-
-	for _, m := range woman.Preference {
-		if m.ID == getManIDByFiancee(engagements, woman) {
-			return false
-		}
-
-		if man.ID == m.ID {
-			return true
-		}
-	}
-
-	// Any partner is always preferred to being single
-	return true
 }
 
 func getManIDByFiancee(engagements map[string]string, woman entities.Woman) string {

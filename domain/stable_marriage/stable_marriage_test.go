@@ -221,3 +221,145 @@ func TestStableMarriage_FindMatching_KnuthExample3(t *testing.T) {
 		require.Equal(t, c.err, err)
 	}
 }
+
+func TestStableMarriage_FindMatching_GusfieldAndIrvinExampale1_1(t *testing.T) {
+	// Initialization of People
+	// Men
+	manOne := &entities.Man{ID: "manOne"}
+	manTwo := &entities.Man{ID: "manTwo"}
+	manThree := &entities.Man{ID: "manThree"}
+	manFour := &entities.Man{ID: "manFour"}
+
+	// Women
+	womanOne := &entities.Woman{ID: "womanOne"}
+	womanTwo := &entities.Woman{ID: "womanTwo"}
+	womanThree := &entities.Woman{ID: "womanThree"}
+	womanFour := &entities.Woman{ID: "womanFour"}
+
+	// Men Preference (Circular permutation)
+	manOne.Preference = []*entities.Woman{womanTwo, womanFour, womanOne, womanThree}
+	manTwo.Preference = []*entities.Woman{womanThree, womanOne, womanFour, womanTwo}
+	manThree.Preference = []*entities.Woman{womanTwo, womanThree, womanOne, womanFour}
+	manFour.Preference = []*entities.Woman{womanFour, womanOne, womanThree, womanTwo}
+
+	// Women Preference
+	womanOne.Preference = []*entities.Man{manTwo, manOne, manFour, manThree}
+	womanTwo.Preference = []*entities.Man{manFour, manThree, manOne, manTwo}
+	womanThree.Preference = []*entities.Man{manOne, manFour, manThree, manTwo}
+	womanFour.Preference = []*entities.Man{manTwo, manOne, manFour, manThree}
+
+	cases := []struct {
+		name           string
+		input          *stable_marriage.FindMatchingInput
+		expectedResult *stable_marriage.FindMatchingOutput
+		err            error
+	}{
+		{
+			name: "sucesfull man proposing matching for Gusfield&Irving Figure 1.1",
+			input: &stable_marriage.FindMatchingInput{
+				Men:   []*entities.Man{manOne, manTwo, manThree, manFour},
+				Women: []*entities.Woman{womanOne, womanTwo, womanThree, womanFour},
+			},
+			expectedResult: &stable_marriage.FindMatchingOutput{
+				Couples: []*entities.Couple{
+					{
+						Man:   *manOne,
+						Woman: *womanFour,
+					},
+					{
+						Man:   *manTwo,
+						Woman: *womanThree,
+					},
+					{
+						Man:   *manThree,
+						Woman: *womanTwo,
+					},
+					{
+						Man:   *manFour,
+						Woman: *womanOne,
+					},
+				},
+			},
+			err: nil,
+		},
+	}
+
+	for _, c := range cases {
+		matching := stable_marriage.StableMarriage{}
+		result, err := matching.FindMatching(c.input)
+
+		require.Equal(t, c.expectedResult, result)
+		require.Equal(t, c.err, err)
+	}
+}
+
+func TestStableMarriage_FindMatching_GusfieldAndIrvinExampale1_4(t *testing.T) {
+	// Initialization of People
+	// Men
+	manOne := &entities.Man{ID: "manOne"}
+	manTwo := &entities.Man{ID: "manTwo"}
+	manThree := &entities.Man{ID: "manThree"}
+	manFour := &entities.Man{ID: "manFour"}
+
+	// Women
+	womanOne := &entities.Woman{ID: "womanOne"}
+	womanTwo := &entities.Woman{ID: "womanTwo"}
+	womanThree := &entities.Woman{ID: "womanThree"}
+	womanFour := &entities.Woman{ID: "womanFour"}
+
+	// Men Preference (Circular permutation)
+	manOne.Preference = []*entities.Woman{womanFour, womanOne, womanTwo, womanThree}
+	manTwo.Preference = []*entities.Woman{womanTwo, womanThree, womanOne, womanFour}
+	manThree.Preference = []*entities.Woman{womanTwo, womanFour, womanThree, womanOne}
+	manFour.Preference = []*entities.Woman{womanThree, womanOne, womanFour, womanTwo}
+
+	// Women Preference
+	womanOne.Preference = []*entities.Man{manFour, manOne, manThree, manTwo}
+	womanTwo.Preference = []*entities.Man{manOne, manThree, manTwo, manFour}
+	womanThree.Preference = []*entities.Man{manOne, manTwo, manThree, manFour}
+	womanFour.Preference = []*entities.Man{manFour, manOne, manThree, manTwo}
+
+	cases := []struct {
+		name           string
+		input          *stable_marriage.FindMatchingInput
+		expectedResult *stable_marriage.FindMatchingOutput
+		err            error
+	}{
+		{
+			name: "sucesfull man proposing matching for Gusfield&Irving Figure 1.4",
+			input: &stable_marriage.FindMatchingInput{
+				Men:   []*entities.Man{manOne, manTwo, manThree, manFour},
+				Women: []*entities.Woman{womanOne, womanTwo, womanThree, womanFour},
+			},
+			expectedResult: &stable_marriage.FindMatchingOutput{
+				Couples: []*entities.Couple{
+					{
+						Man:   *manOne,
+						Woman: *womanFour,
+					},
+					{
+						Man:   *manTwo,
+						Woman: *womanThree,
+					},
+					{
+						Man:   *manThree,
+						Woman: *womanTwo,
+					},
+					{
+						Man:   *manFour,
+						Woman: *womanOne,
+					},
+				},
+			},
+			err: nil,
+		},
+	}
+
+	for _, c := range cases {
+		matching := stable_marriage.StableMarriage{}
+		result, err := matching.FindMatching(c.input)
+
+		require.Equal(t, c.expectedResult, result)
+		require.Equal(t, c.err, err)
+	}
+}

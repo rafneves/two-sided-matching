@@ -27,7 +27,7 @@ func (m *StableMarriage) FindMatching(input *FindMatchingInput) (*FindMatchingOu
 		nextWomanToCourtIndex[m.ID] = 0
 	}
 
-	for suitorIndex := 0; len(engagements) < instanceSize; {
+	for suitorIndex := 0; engagements.Size() < instanceSize; {
 		suitor := input.Men[suitorIndex]
 
 		for suitor != nil {
@@ -54,9 +54,10 @@ func (m *StableMarriage) FindMatching(input *FindMatchingInput) (*FindMatchingOu
 	// Create the matching
 	matching := &FindMatchingOutput{}
 	for _, m := range input.Men {
+		w := getWomanByID(input.Women, engagements.GetWomanID(m.ID))
 		couple := &entities.Couple{
 			Man:   *m,
-			Woman: *getWomanByID(input.Women, engagements[m.ID]),
+			Woman: *w,
 		}
 		matching.Couples = append(matching.Couples, couple)
 	}
@@ -64,18 +65,12 @@ func (m *StableMarriage) FindMatching(input *FindMatchingInput) (*FindMatchingOu
 	return matching, nil
 }
 
-func getManEngagedWithWoman(engagements map[string]string, men []*entities.Man, woman *entities.Woman) *entities.Man {
+func getManEngagedWithWoman(engagement engagement, men []*entities.Man, woman *entities.Woman) *entities.Man {
 	if woman == nil {
 		return nil
 	}
 
-	engagedManID := ""
-	for manID, womanID := range engagements {
-		if woman.ID == womanID {
-			engagedManID = manID
-			break
-		}
-	}
+	engagedManID := engagement.GetManID(woman.ID)
 
 	for _, m := range men {
 		if m.ID == engagedManID {
@@ -92,6 +87,7 @@ func getWomanByID(women []*entities.Woman, ID string) *entities.Woman {
 			return w
 		}
 	}
+
 	return nil
 }
 
@@ -114,4 +110,22 @@ func (e engagement) Add(manID string, womanID string) {
 		return
 	}
 	e[manID] = womanID
+}
+
+func (e engagement) GetManID(womanID string) string {
+	for mID, wID := range e {
+		if wID == womanID {
+			return mID
+		}
+	}
+
+	return ""
+}
+
+func (e engagement) GetWomanID(manID string) string {
+	return e[manID]
+}
+
+func (e engagement) Size() int {
+	return len(e)
 }

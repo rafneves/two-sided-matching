@@ -22,9 +22,15 @@ func (m *StableMarriage) FindMatching(input *FindMatchingInput) (*FindMatchingOu
 	instanceSize := len(input.Men)
 	engagements := newEngagement()
 
+	// Every man courts first the most preferred woman.
 	nextWomanToCourtIndex := make(map[string]int)
 	for _, m := range input.Men {
 		nextWomanToCourtIndex[m.ID] = 0
+	}
+
+	// Every woman starts the algorithm engaged with a very undesirable man
+	for _, w := range input.Women {
+		engagements.Engage("", w.ID)
 	}
 
 	for suitorIndex := 0; suitorIndex < instanceSize; {

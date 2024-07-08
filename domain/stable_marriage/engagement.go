@@ -33,7 +33,3 @@ func (e engagement) GetManID(womanID string) string {
 func (e engagement) GetWomanID(manID string) string {
 	return e[manID]
 }
-
-func (e engagement) Size() int {
-	return len(e)
-}

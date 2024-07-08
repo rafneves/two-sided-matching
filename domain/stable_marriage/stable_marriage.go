@@ -27,7 +27,7 @@ func (m *StableMarriage) FindMatching(input *FindMatchingInput) (*FindMatchingOu
 		nextWomanToCourtIndex[m.ID] = 0
 	}
 
-	for suitorIndex := 0; engagements.Size() < instanceSize; {
+	for suitorIndex := 0; suitorIndex < instanceSize; {
 		suitor := input.Men[suitorIndex]
 
 		for suitor != nil {
